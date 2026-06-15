@@ -6,6 +6,7 @@ A Chrome extension for organizing and browsing bookmarks with multiple views, se
 
 - **Multiple view modes**: Category (folder), Year, Month, Recently Opened, Newly Added
 - **Dual display**: Card grid and compact list with toggle
+- **Graph view**: Visual clusters by folder, domain, and inferred topic
 - **Search**: Real-time debounced filtering by title and URL
 - **Random**: Opens a random bookmark in a new tab with toast notification
 - **Edit**: Rename, delete, and move bookmarks via folder picker
@@ -71,4 +72,5 @@ bookmark-organizer/
 
 - **Svelte 4** — compiled, minimal runtime
 - **Vite 5** — fast build tooling
+- **Cytoscape.js** — interactive bookmark relationship graph
 - **Chrome Manifest V3** — service worker, bookmarks + history + storage APIs
