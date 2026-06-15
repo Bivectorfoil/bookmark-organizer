@@ -2,10 +2,12 @@ name: Build Chrome Extension
 
 on:
   push:
+    branches:
+      - '**'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build-extension-${{ github.ref }}
@@ -32,16 +34,57 @@ jobs:
       - name: Build extension
         run: npm run build
 
+      - name: Prepare release metadata
+        id: release
+        run: |
+          short_sha="${GITHUB_SHA::7}"
+          asset_name="bookmark-organizer-extension-${short_sha}.zip"
+
+          {
+            echo "short_sha=${short_sha}"
+            echo "tag=build-${GITHUB_SHA}"
+            echo "asset_name=${asset_name}"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Package extension
         run: |
           test -f dist/manifest.json
           cd dist
-          zip -r ../bookmark-organizer-extension.zip .
+          zip -r "../${{ steps.release.outputs.asset_name }}" .
 
-      - name: Upload extension package
+      - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bookmark-organizer-extension
-          path: bookmark-organizer-extension.zip
+          name: bookmark-organizer-extension-${{ steps.release.outputs.short_sha }}
+          path: ${{ steps.release.outputs.asset_name }}
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          ASSET_NAME: ${{ steps.release.outputs.asset_name }}
+          SHORT_SHA: ${{ steps.release.outputs.short_sha }}
+        run: |
+          notes="Automated build for commit ${GITHUB_SHA}."
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "Bookmark Organizer ${SHORT_SHA}" \
+              --notes "$notes" \
+              --latest
+
+            gh release upload "$TAG" "$ASSET_NAME#Chrome extension package" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          else
+            gh release create "$TAG" "$ASSET_NAME#Chrome extension package" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "Bookmark Organizer ${SHORT_SHA}" \
+              --notes "$notes" \
+              --latest
+          fi
