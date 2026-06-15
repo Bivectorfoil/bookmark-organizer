@@ -28,6 +28,13 @@ A Chrome extension for organizing and browsing bookmarks with multiple views, se
 
 5. Click the extension icon in the toolbar to open the organizer page
 
+## Automated Builds
+
+Every push runs the `Build Chrome Extension` GitHub Actions workflow. The
+workflow installs dependencies with `npm ci`, builds the extension with
+`npm run build`, packages the generated `dist/` contents as
+`bookmark-organizer-extension.zip`, and uploads it as a workflow artifact.
+
 ## Project Structure
 
 ```
