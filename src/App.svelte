@@ -15,6 +15,7 @@
   import Toolbar from './components/Toolbar.svelte';
   import BookmarkGrid from './components/BookmarkGrid.svelte';
   import BookmarkList from './components/BookmarkList.svelte';
+  import BookmarkGraph from './components/BookmarkGraph.svelte';
   import FolderPicker from './components/FolderPicker.svelte';
   import Toast from './components/Toast.svelte';
 
@@ -110,7 +111,9 @@
       <p>{ $searchQuery ? '没有匹配的书签。' : '未找到书签。' }</p>
     </div>
   {:else}
-    {#if $viewMode === 'grid'}
+    {#if $viewMode === 'graph'}
+      <BookmarkGraph bookmarks={filteredBookmarks} />
+    {:else if $viewMode === 'grid'}
       {#if isGrouped}
         <BookmarkGrid groups={displayGroups} groupLabels={displayLabels} />
       {:else}

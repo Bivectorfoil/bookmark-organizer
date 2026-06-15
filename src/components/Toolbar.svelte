@@ -72,6 +72,14 @@
       >
         ☰
       </button>
+      <button
+        class="toggle-btn"
+        class:active={$viewMode === 'graph'}
+        on:click={() => viewMode.set('graph')}
+        title="Graph view"
+      >
+        ⬡
+      </button>
     </div>
   </div>
 </div>
@@ -191,7 +199,7 @@
     transition: background 0.15s;
   }
 
-  .toggle-btn:first-child {
+  .toggle-btn:not(:last-child) {
     border-right: 1px solid var(--border);
   }
 

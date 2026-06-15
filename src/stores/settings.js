@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-// View mode: 'grid' | 'list'
+// View mode: 'grid' | 'list' | 'graph'
 export const viewMode = writable('grid');
 
 // Sort/group mode: 'category' | 'year' | 'month' | 'recent' | 'new'
